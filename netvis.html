@@ -16,18 +16,15 @@
                 <div id="visualization" style="position: relative; height: 700px; background: #fafafa;"/>
             </div>
         </div>
-    
-    
+
     <script src="netvis.js"/>
     <script>
         var id = findGetParameter('id');
         var type = findGetParameter('type');
-        console.log(type);
         var header = document.getElementById('node-type');
         header.appendChild(document.createTextNode(type));
         var header1 = document.getElementById('node-id');
         header1.appendChild(document.createTextNode(id));
-        
         showGraph('visualization', id, type)
     </script>
 </div>
