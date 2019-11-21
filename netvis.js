@@ -98,7 +98,8 @@ const hidePopover = () => {
 
 const handleNodeClick = (createPopoverContent, viscontainer) => ({
   node,
-  event
+  event,
+  types
 }) => {
   if (isPopoverOpen) return;
 
@@ -115,7 +116,7 @@ const handleNodeClick = (createPopoverContent, viscontainer) => ({
     }
   };
 
-  const content = createPopoverContent({ node, onDismiss, viscontainer });
+  const content = createPopoverContent({ node, onDismiss, viscontainer, types });
 
   document.addEventListener("keyup", onEscape, false);
   overlay.addEventListener("mousedown", onDismiss, false);
@@ -131,10 +132,20 @@ const handleNodeClick = (createPopoverContent, viscontainer) => ({
 };
 
 // --- popover content ---
-const createPopoverContent = ({ node, onDismiss, viscontainer }) => {
+const createPopoverContent = ({ node, onDismiss, viscontainer, types }) => {
   const container = document.createElement("div");
 
   const nodeUl = document.createElement("ul");
+  nodeUl.className = "list-unstyled";
+
+  const popHeaderLink = document.createElement("a");
+  popHeaderLink.href = node["detail_view"];
+  popHeaderLink.innerText = `${node["label"]}`;
+
+  const popHeader = document.createElement("h4");
+  popHeader.appendChild(popHeaderLink);
+
+  container.appendChild(popHeader);
   Object.keys(node)
     .filter(
       key =>
@@ -150,13 +161,14 @@ const createPopoverContent = ({ node, onDismiss, viscontainer }) => {
           "neighbors",
           "edges",
           "detail_view",
-          "as_graph"
+          "as_graph",
+          "label"
         ].includes(key)
     )
     .forEach(key => {
       const value = node[key];
       const listItem = document.createElement("li");
-      listItem.innerText = `${key}: ${value}`;
+      listItem.innerHTML = `<strong>${key}</strong>: ${value}`;
       nodeUl.appendChild(listItem);
     });
 
