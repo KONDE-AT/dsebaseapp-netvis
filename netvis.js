@@ -173,7 +173,9 @@ const createPopoverContent = ({ node, onDismiss, viscontainer, types }) => {
     });
 
   const button = document.createElement("button");
-  button.innerText = "Load more";
+  button.className = "btn btn-dark";
+  button.type = "button"
+  button.innerText = "mehr";
   button.addEventListener(
     "click",
     event => {
