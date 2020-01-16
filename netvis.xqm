@@ -35,7 +35,7 @@ declare function netvis:graph-url($entity-id as xs:string, $type as xs:string) {
 };
 
 
-declare function netvis:remove_props($node as node(), $prop_name as xs:string) as xs:node {
+declare function netvis:remove_props($node as node(), $prop_name as xs:string) as node() {
   let $node_name := name($node)
   let $node_items :=
     for $x in $node/*
