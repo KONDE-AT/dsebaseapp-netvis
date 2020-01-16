@@ -6,7 +6,7 @@ import module namespace config="http://www.digital-archiv.at/ns/config" at "../m
 
 declare namespace tei="http://www.tei-c.org/ns/1.0";
 
-declare variable $netvis:config := 
+declare variable $netvis:config :=
     if (doc-available($app:data||'/meta/netvis-config.xml'))
         then
             doc($app:data||'/meta/netvis-config.xml')//netvisConfig
@@ -19,7 +19,7 @@ declare function netvis:fetch_props($node as node(), $props) {
         for $x in $props
             let $el_name := name($x)
             let $el_type := data($x/@type)
-            let $el_value := 
+            let $el_value :=
                 switch ($el_type)
                 case 'xpath' return element {$el_name} {util:eval($x/text())}
                 default return  element {$el_name} {$x/text()}
@@ -35,6 +35,17 @@ declare function netvis:graph-url($entity-id as xs:string, $type as xs:string) {
 };
 
 
+declare function netvis:remove_props($node as node(), $prop_name as xs:string) as xs:node {
+  let $node_name := name($node)
+  let $node_items :=
+    for $x in $node/*
+      let $nodename := name($x)
+      where $nodename != $prop_name
+      return $x
+  return element {$node_name} {$node_items}
+};
+
+
 declare function netvis:item_as_graph($node as node(), $type as xs:string){
     let $node_conf := $netvis:config//Entity[@type=$type]
     let $mandatory_props := netvis:fetch_props($node, $node_conf/mandatoryProps/*)
@@ -43,7 +54,7 @@ declare function netvis:item_as_graph($node as node(), $type as xs:string){
         <nodes>
             {$mandatory_props}
         </nodes>
-    let $target_nodes := 
+    let $target_nodes :=
         for $target_group in $node_conf//target
             let $x := $target_group/xpath
             let $props := $target_group/mandatoryProps/*
@@ -67,10 +78,10 @@ declare function netvis:item_as_graph($node as node(), $type as xs:string){
                     <target>{$t}</target>
                 </edges>
     let $types := $netvis:config//NodeTypes
-    return 
+    return
         <graph>
             {$source_node}
-            {for $x in $target_nodes return $x}
+            {for $x in $target_nodes return netvis:remove_props($x, 'relationType')}
             {for $x in $edges return $x}
         <types>
             {for $x in $types/* return <nodes>{for $y in $x/* return $y}</nodes>}
@@ -89,7 +100,7 @@ let $context := doc($cache-file)/CachedGraph
 
 for $x in $docs
     let $graph := netvis:item_as_graph($x, $type)
-    let $new_graph := 
+    let $new_graph :=
         <graph>
             <Nodes>{for $n in $graph/nodes return $n}</Nodes>
         </graph>
