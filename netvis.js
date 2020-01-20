@@ -201,16 +201,33 @@ const createPopoverContent = ({ node, onDismiss, viscontainer, types }) => {
 };
 
 const render = (graph, viscontainer) => {
+  const { createElement: h } = React
+  const {
+    ToggleThirdDimension,
+    Visualization3D,
+    Visualization,
+    ExportButton,
+    Legend
+  } = NetworkVisualization
+
   ReactDOM.render(
-    React.createElement(NetworkVisualization.Visualization, {
-      graph,
-      dimensions: 2,
-      children: props => [
-        React.createElement(NetworkVisualization.ExportButton, props),
-        React.createElement(NetworkVisualization.Legend, props)
-      ],
-      onNodeClick: handleNodeClick(createPopoverContent, viscontainer)
-    }),
+    h(
+      ToggleThirdDimension,
+      { style: { position: 'absolute', bottom: '20px', left: '20px' } },
+      is3D => {
+        const VisualizationComponent = is3D
+          ? Visualization3D
+          : Visualization
+        return h(VisualizationComponent, {
+          graph,
+          dimensions: 2,
+          onNodeClick: handleNodeClick(createPopoverContent, viscontainer)
+        }, props => [
+          h(ExportButton, props),
+          h(Legend, props)
+        ])
+      }
+    ),
     document.getElementById(viscontainer)
   );
 };
