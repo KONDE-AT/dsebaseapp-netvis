@@ -1,6 +1,17 @@
 var spinner = new Spinner().spin();
 
 const toArray = prop => (Array.isArray(prop) ? prop : [prop]);
+const toObj = arr => toArray(arr || []).reduce((acc, entity) => {
+  acc[entity.id] = entity
+  return acc
+}, {})
+
+// global graph store for both 2D and 3D visualizations
+let graphData = {
+  nodes: {},
+  edges: {},
+  types: { nodes: {}, edges: {} },
+}
 
 const fetchData = (url, viscontainer) => {
   const visCard = document.getElementById(viscontainer);
@@ -10,15 +21,35 @@ const fetchData = (url, viscontainer) => {
     .then(response => response.json())
     .then(graph => {
       visCard.removeChild(spinner.el);
-
-      return {
-        nodes: toArray(graph.nodes || []),
-        edges: toArray(graph.edges || []),
-        types: {
-          nodes: toArray(graph.types.nodes || []),
-          edges: toArray(graph.types.edges || [])
-        }
-      };
+      
+      const nodes = {
+        ...toObj(graph.nodes),
+        ...graphData.nodes,
+      }
+      
+      const edges = {
+        ...toObj(graph.edges),
+        ...graphData.edges
+      }
+      
+      const types = {
+        nodes: {
+          ...toObj(graph.types.nodes),
+          ...graphData.types.nodes,
+        },
+        edges: {
+          ...toObj(graph.types.edges),
+          ...graphData.types.edges,
+        },
+      }
+      
+      graphData = {
+        nodes,
+        edges,
+        types,
+      }
+      
+      return graphData;
     })
     .catch(error => {
       visCard.removeChild(spinner.el);
@@ -234,5 +265,5 @@ const render = (graph, viscontainer) => {
 
 function showGraph(viscontainer, id, type) {
   const sourceUrl = `entity-as-graph.xql?id=${id}&type=${type}`;
-  fetchData(sourceUrl, viscontainer).then(graph => render(graph, viscontainer));
+  fetchData(sourceUrl, viscontainer).then(() => render(graphData, viscontainer));
 }
