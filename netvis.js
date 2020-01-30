@@ -234,6 +234,7 @@ const render = (graph, viscontainer) => {
   const { createElement: h } = React
   const {
     ExportButton,
+    FilterControls,
     Legend,
     SimulationControls,
     ToggleThirdDimension,
@@ -243,7 +244,6 @@ const render = (graph, viscontainer) => {
 
   ReactDOM.render(
     h(ToggleThirdDimension, undefined, is3D => {
-      const VisualizationComponent = is3D ? Visualization3D : Visualization
       return h(
         SimulationControls,
         {
@@ -252,18 +252,29 @@ const render = (graph, viscontainer) => {
           style: {},
           ui: { dagMode: false },
         },
-        ({ charge, dagMode, distance, showDirectionality }) =>
-          h(
-            VisualizationComponent,
-            {
-              dagMode,
-              graph,
-              onNodeClick: handleNodeClick(createPopoverContent, viscontainer),
-              showDirectionality,
-              simulation: { charge, distance },
-            },
-            props => [h(ExportButton, props), h(Legend, props)]
-          )
+        ({ charge, dagMode, distance, showDirectionality }) => {
+          return h(FilterControls, { graph }, ({ filteredNodeIds }) => {
+            const VisualizationComponent = is3D
+              ? Visualization3D
+              : Visualization
+            return h(
+              VisualizationComponent,
+              {
+                dagMode,
+                graph,
+                onNodeClick: handleNodeClick(
+                  createPopoverContent,
+                  viscontainer
+                ),
+                selectedNodeIds: filteredNodeIds,
+                showDirectionality,
+                showNeighborsOnly: Boolean(filteredNodeIds.size),
+                simulation: { charge, distance },
+              },
+              props => [h(ExportButton, props), h(Legend, props)]
+            )
+          })
+        }
       )
     }),
     document.getElementById(viscontainer)
