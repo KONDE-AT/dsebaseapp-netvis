@@ -10,7 +10,7 @@ declare namespace util = "http://exist-db.org/xquery/util";
 let $source-col := $app:data||'/cache'
 let $netivs_conf := $netvis:config
 let $collection := request:get-parameter('collection', 'editions')
-let $type := request:get-parameter('type', 'Tagebucheintrag')
+let $type := request:get-parameter('type', 'Abstract')
 let $types := $netvis:config//NodeTypes
 let $contents := <CachedGraph>{$types}</CachedGraph>
 let $cache-file := xmldb:store($source-col, 'graph_cache.xml', $contents)
@@ -19,7 +19,7 @@ let $context := doc($cache-file)/CachedGraph
 
 for $x in $docs
     let $graph := netvis:item_as_graph($x, $type)
-    let $new_graph := 
+    let $new_graph :=
         <graph>
             <Nodes>{for $n in $graph/nodes return $n}</Nodes>
         </graph>
