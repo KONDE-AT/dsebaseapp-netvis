@@ -47,7 +47,7 @@ function showGraph(sourceurl, viscontainer) {
       const toArray = prop => Array.isArray(prop) ? prop : [prop]
       return {
         nodes: toArray(graph.nodes || []),
-        edges: toArray(graph.edges || []),
+        edges: toArray(graph.edges || []).filter(edge => edge.source && edge.target),
         types: {
           nodes: toArray(graph.types.nodes || []),
           edges: toArray(graph.types.edges || []),
