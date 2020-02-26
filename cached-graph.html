@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<div data-template="templates:surround" data-template-with="templates/datatable.html" data-template-at="datatable">
+  <style>
+    #visualization {
+      background: #fafafa;
+      height: 700px;
+      position: relative;
+    }
+    #visualization label {
+      /* overwrite fundament */
+      margin-bottom: 0;
+    }
+    [data-nerv-legend] {
+      left: 0.4rem;
+      top: 0.4rem;
+    }
+    [data-nerv-export] {
+      bottom: 0.4rem;
+      left: 0.4rem;
+    }
+    [data-nerv-3d-toggle] {
+      bottom: 0.8rem;
+      right: 0.8rem;
+    }
+    [data-nerv-filter-controls] {
+      right: 0.4rem;
+      top: 0.4rem;
+    }
+    [data-nerv-simulation-controls] {
+      bottom: 0.4rem;
+      right: 3rem;
+    }
+  </style>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/spin.js/2.3.2/spin.min.js"/>
+  <script crossorigin="crossorigin" src="https://unpkg.com/react@16/umd/react.production.min.js"/>
+  <script crossorigin="crossorigin" src="https://unpkg.com/react-dom@16/umd/react-dom.production.min.js"/>
+  <script crossorigin="crossorigin" src="https://unpkg.com/three@latest/build/three.min.js"/>
+  <script crossorigin="crossorigin" src="https://unpkg.com/@acdh/network-visualization@latest/lib/network-visualization.umd.js"/>
+
+  <div class="card">
+    <div class="card-header" style="text-align:center;">
+      <h3>
+        Visualize Data as Graph
+      </h3>
+    </div>
+    <div class="card-body">
+      <div id="visualization"/>
+    </div>
+  </div>
+
+  <script src="netvis-cache.js"/>
+  <script>
+
+    showGraph('cached-graph.xql', 'visualization')
+  </script>
+</div>

@@ -22,5 +22,6 @@ for $x in $docs
     let $new_graph :=
         <graph>
             <Nodes>{for $n in $graph/nodes return $n}</Nodes>
+            <Edges>{for $n in $graph/edges return $n}</Edges>
         </graph>
     return update insert $new_graph into $context
